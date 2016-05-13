@@ -1,1 +1,1 @@
-${address.type} ${address.name}
+${address.type} ${address.name} ${address.postalCode}

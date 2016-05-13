@@ -1,4 +1,6 @@
 #!/usr/bin/env groovy
+import javafx.geometry.Pos
+import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 @Grapes(
         @Grab('org.apache.poi:poi:3.15-beta1')
@@ -69,6 +71,17 @@ class PostalAddress {
         )
     }
 
+    static List<PostalAddress> readAddresses(HSSFSheet sheet, Closure closure) {
+        List<PostalAddress> addrs = []
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+            addrs.add(closure(row))
+        }
+        return addrs
+    }
+
 }
 
 def file = args[0];
@@ -76,17 +89,24 @@ def templateName = args.length == 2 ? args[1] : 'address.tpl'
 
 InputStream inp = new FileInputStream(file);
 Workbook wb = new HSSFWorkbook(inp);
-Sheet sheet = wb.getSheetAt(0);
-
-Row row = sheet.getRow(2);
 
 
-def address = PostalAddress.forBucharest(row)
+List<PostalAddress> addreses = []
+
+// read addresses for Bucharest
+addreses.addAll(PostalAddress.readAddresses(wb.getSheetAt(0), { row -> PostalAddress.forBucharest(row) }))
+addreses.addAll(PostalAddress.readAddresses(wb.getSheetAt((1)), { row -> PostalAddress.forCity(row) }))
+addreses.addAll(PostalAddress.readAddresses(wb.getSheetAt((2)), { row -> PostalAddress.forTown(row) }))
+
+// output
 def template = new File(templateName).getText('UTF-8')
-
 def engine = new groovy.text.SimpleTemplateEngine().createTemplate(template)
 
-println("Adresa este: ${engine.make([address: address])}")
+for (PostalAddress address : addreses) {
+    println("${engine.make([address: address])}")
+}
+
+
 
 
 
