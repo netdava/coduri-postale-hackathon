@@ -1,0 +1,35 @@
+= Romanian postal codes hackathon project
+Ioan Eugen Stan <ieugen@netdava.com>
+
+
+== Transformare de date de la data.gov.ro
+
+Datele de la https://data.gov.ro/dataset/coduri-postale-romania sunt în format Microsoft Excell.
+Asta nu le face foarte potrivite pentru procesare automată.
+
+Am făcut un script mic care extrage toate informațiile și normalizează câmpurile (crează un obiect).
+Pe acestea le putem transforma în orice format dorim.
+
+Scriptul este scris în http://groovy-lang.org/[Groovy] și folosește Groovy grapes pentru a putea fi executat ușor.
+
+Aveți nevoie de Java și de groovy instalate.
+Pentru instalare ușoară pe Linux/Unix:
+
+[source, shell]
+----
+    $ sudo apt-get install groovy2
+    $ echo "Sau ... "
+    $ sudo apt-get install groovy
+    $ echo "Testați cu "
+    $ groovy -v
+    Groovy Version: 2.4.5 JVM: 1.8.0_91 Vendor: Oracle Corporation OS: Linux
+----
+
+.Puteți porni scriptul cu comanda
+[source, shell]
+----
+    $ ./postal-codes-extract.groovy ../infocod-oct-2013.xls
+----
+
+Puteți modifca șablonul din `address.tpl` pentru a modifica formatul de ieșire.
+
